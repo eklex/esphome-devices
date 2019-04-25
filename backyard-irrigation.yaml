@@ -1,0 +1,15 @@
+substitutions:
+  # Device
+  device_name: backyard_irrigation
+  timezone: America/New_York
+  logger_level: DEBUG
+  logger_baud_rate: "115200"
+  # Board
+  platform: ESP8266
+  board: esp12e
+  # Pinout
+  actuator_pin: GPIO5
+  # Firware
+  firmware_version: "esp-simple-actuator-rel0.0"
+
+<<: !include collection/esp-simple-actuator.yaml
