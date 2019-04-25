@@ -1,0 +1,89 @@
+esphome:
+  name: ${device_name}
+  platform: ${platform}
+  board: ${board}
+  build_path: build/${device_name}
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  domain: !secret wifi_domain
+
+logger:
+  level: ${logger_level}
+  baud_rate: ${logger_baud_rate}
+
+api:
+  password: !secret api_password
+
+ota:
+  safe_mode: true
+  password: !secret ota_password
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+    timezone: ${timezone}
+
+output:
+  - platform: esp8266_pwm
+    id: ${device_name}_red_output
+    pin: ${led_red_pin}
+  - platform: esp8266_pwm
+    id: ${device_name}_green_output
+    pin: ${led_green_pin}
+  - platform: esp8266_pwm
+    id: ${device_name}_blue_output
+    pin: ${led_blue_pin}
+
+light:
+  - platform: rgb
+    name: ${device_name}_light
+    red: ${device_name}_red_output
+    green: ${device_name}_green_output
+    blue: ${device_name}_blue_output
+    effects:
+      - random:
+          name: "Fast Random"
+      - random:
+          name: "Slow Random"
+          transition_length: 30s
+          update_interval: 30s
+      - strobe:
+      - strobe:
+          name: "WR Strobe"
+          colors:
+            - state: True
+              brightness: 100%
+              red: 100%
+              green: 100%
+              blue: 100%
+              duration: 500ms
+            - state: False
+              duration: 250ms
+            - state: True
+              brightness: 100%
+              red: 100%
+              green: 0%
+              blue: 0%
+              duration: 500ms
+            - state: False
+              duration: 250ms
+
+sensor:
+  # DHT sensor
+  - platform: dht
+    pin: ${dht22_pin}
+    model: AM2302
+    temperature:
+      name: ${device_name}_temperaturelist
+    humidity:
+      name: ${device_name}_humidity
+    update_interval: 10s
+  # Common sensors
+  - <<: !include common/sensor/uptime.yaml
+  - <<: !include common/sensor/wifi_signal.yaml
+
+switch: !include_dir_list common/switch/
+binary_sensor: !include_dir_list common/binary_sensor/
+text_sensor: !include_dir_list common/text_sensor/

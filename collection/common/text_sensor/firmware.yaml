@@ -1,0 +1,5 @@
+platform: template
+name: ${device_name}_firmware
+update_interval: 4h
+lambda: |-
+  return {"$firmware_version"};
